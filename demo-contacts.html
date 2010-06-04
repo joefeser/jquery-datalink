@@ -16,11 +16,14 @@
     </tr>
     {{each(i,contact) contacts}}
     <tr class="contact">
-        <td><a href="#" class="contact-remove">remove</a></td>
+        <td><a href="#" class="contact-remove">remove</a>
+            <br />
+            <br />
+            Active: <input type="checkbox" name="active" itemprop="active" class="active"></td>
         <td>
             <input itemprop="firstName" type="text" value="${firstName}" />
             <div>
-                full name: <span class="contact-fullname"></span>
+                full name: <span class="contact-fullname"></span> <span class="contact-active"></span>
             </div>
         </td>
         <td><input itemProp="lastName" type="text" value="${lastName}" /></td>

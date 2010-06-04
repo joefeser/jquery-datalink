@@ -2,10 +2,10 @@ jQuery(function($){
 
 // define some basic default data to start with
 var contacts = [
-    { firstName: "Dave", lastName: "Reed", phones: [
+    { firstName: "Dave", lastName: "Reed", active: true, phones: [
         { type: "Mobile", number: "(555) 121-2121" },
         { type: "Home", number: "(555) 123-4567" } ]  },
-    { firstName: "John", lastName: "Doe", phones: [
+    { firstName: "John", lastName: "Doe", active: true, phones: [
         { type: "Mobile", number: "(555) 444-2222" },
         { type: "Home", number: "(555) 999-1212" } ]  }
 ];
@@ -25,7 +25,14 @@ $.extend($.convertFn, {
         return value;
     },
     fullname: function(value, settings) {
-        return settings.source.firstName + " " + settings.source.lastName;
+        return settings.source.firstName + " " + settings.source.lastName + " isActive:";
+    },
+    //this is an attempted converter to show that we need to hook into the change event or our object will no longer be a bool
+    active: function(value, settings) {
+        if (value === true || value === false) {
+            return value;
+        }
+        return value == "on" ? true : false;
     }
 });
 
@@ -38,7 +45,7 @@ $("#save").click(function() {
 // notice that no code here exists that explicitly redraws
 // the template.
 $("#insert").click(function() {
-    $.push(contacts, { firstName: "", lastName: "", phones: [] });
+    $.push(contacts, { firstName: "", lastName: "", active: true, phones: [] });
 });
 
 $("#sort").click(function() {
@@ -59,11 +66,18 @@ function refresh() {
             source: "*",
             target: contact
         }, this);
-        
+/*
+        $.linkLive({
+            source: "active",
+            target: contact,
+            convert: "active"
+        }, this);
+*/
+
         $.link({
             from: {
                 sources: contact,
-                attr: "firstName lastName",
+                attr: "firstName lastName", //we can't use two converters? first one in wins? active
                 convert: "fullname"
             },
             to: {
@@ -71,7 +85,29 @@ function refresh() {
                 update: true
             }
         }, this);
-        
+
+         $.link({
+            from: {
+                sources: contact,
+                attr: "active",
+                convert: "active"
+            },
+            to: {
+                targets: ".contact-active",
+                update: true,
+                convert: "active"
+            }
+        }, this);
+
+        //change the active attr so that we can have the event fire.
+        $(".contact-active", this).click(function() {
+            //this will not work because jQuery does not know about the update.
+            //contact.active = !contact.active;
+            $(contact).attr("active", !contact.active);
+        });
+
+
+
         $(".contact-remove", this).click(function() {
             $.splice(contacts, i, 1);
         });
