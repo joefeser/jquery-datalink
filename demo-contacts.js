@@ -66,13 +66,6 @@ function refresh() {
             source: "*",
             target: contact
         }, this);
-/*
-        $.linkLive({
-            source: "active",
-            target: contact,
-            convert: "active"
-        }, this);
-*/
 
         $.link({
             from: {
@@ -103,6 +96,7 @@ function refresh() {
         $(".contact-active", this).click(function() {
             //this will not work because jQuery does not know about the update.
             //contact.active = !contact.active;
+            //this will update the object and the contact-active span will update but not the checkbox.
             $(contact).attr("active", !contact.active);
         });
 
